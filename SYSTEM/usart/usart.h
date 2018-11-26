@@ -41,7 +41,9 @@ void RemoteDataPrcess(uint8_t *pData);
 
 #define Usart1_RX_LEN   30
 
+extern void RemoteDataPrcess2(uint8_t *pData);
 extern u8 Uart1_RX[Usart1_RX_LEN] ;	
+extern u8 Uart3_RX[Usart1_RX_LEN] ;	
 
 
 typedef __packed struct

@@ -5,12 +5,14 @@
 #include "delay.h"
 #include "sys.h"
 #include "usart.h"
+#include "encoder.h"
 #include "dma.h"
 #include "timer.h"
 #include "can.h"
 #include "pid.h"
 extern pid_t pid_pos[4];
 extern RC_Ctl_t RC_CtrlData;
+extern RC_Ctl_t RC2_CtrlData;
 extern moto_measure_t moto_chassis[4] ;
 int speed_ref=100;
 int current_out=0; 

@@ -65,6 +65,7 @@ void USART1_IRQHandler(void)
 		 if(this_time_rx_len == RC_FRAME_LENGTH)
 			{
 				RemoteDataPrcess(Uart1_RX);
+
    //     LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_RC));
 			}
 	   DMA_SetCurrDataCounter(DMA1_Channel5,BSP_USART1_DMA_RX_BUF_LEN);//111111
@@ -83,15 +84,22 @@ void USART1_IRQHandler(void)
 
 
 RC_Ctl_t RC_CtrlData;   //remote control data
-
+extern u8 pData222[30];
 
 void RemoteDataPrcess(uint8_t *pData)
 {
+		int ii;
     if(pData == NULL)
     {
         return;
     }
-    
+
+		
+		for(ii=0;ii<20;ii++)
+		{
+			    pData222[ii]=pData[ii];
+		}
+
     RC_CtrlData.rc.ch0 = ((int16_t)pData[0] | ((int16_t)pData[1] << 8)) & 0x07FF; 
     RC_CtrlData.rc.ch1 = (((int16_t)pData[1] >> 3) | ((int16_t)pData[2] << 5)) & 0x07FF;
     RC_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |

@@ -4,7 +4,7 @@
 
 void USART1_DMA_RX(void);
 					    
-
+void USART3_DMA_RX(void);
 
 		   
 #endif
