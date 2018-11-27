@@ -19,6 +19,7 @@ u8 pData222[30];
   delay_ms(1000);
   USART1_DMA_RX();
 	USART3_DMA_RX();
+	 
  	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_2tq,CAN_BS1_3tq,6,CAN_Mode_Normal);//CAN???????,???1Mbps    
   delay_ms(1000);
 	chassis_pid_param_init();	 
@@ -44,20 +45,51 @@ u8 pData222[30];
 		 y=- (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
 		 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
 
+		 			 if(RC_CtrlData.rc.s1==2)
+						{
+						GPIO_SetBits(GPIOA,GPIO_Pin_1);
+						GPIO_ResetBits(GPIOA,GPIO_Pin_0);
+						}
+						if(RC_CtrlData.rc.s1==1)
+						{
+						GPIO_SetBits(GPIOA,GPIO_Pin_0);
+						GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+						}	
+						if(RC_CtrlData.rc.s1==3)
+						{
+						GPIO_SetBits(GPIOA,GPIO_Pin_0);
+						GPIO_SetBits(GPIOA,GPIO_Pin_1);
+						}		
+						
+			if(RC_CtrlData.rc.s2==2)
+			{
+			GPIO_SetBits(GPIOA,GPIO_Pin_2);
+			GPIO_ResetBits(GPIOA,GPIO_Pin_3);
+			}
+			if(RC_CtrlData.rc.s2==1)
+			{
+			GPIO_SetBits(GPIOA,GPIO_Pin_3);
+			GPIO_ResetBits(GPIOA,GPIO_Pin_2);
+			}	
+			if(RC_CtrlData.rc.s2==3)
+			{
+			GPIO_SetBits(GPIOA,GPIO_Pin_3);
+			GPIO_SetBits(GPIOA,GPIO_Pin_2);
+			}			
 		 
-		 if(RC_CtrlData.rc.s1==1)
-		 {
-		 change1= (RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c);
-		 x=- (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
-		 y=- (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
-		 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
-		 }
-		 if(RC_CtrlData.rc.s1==2)
-		 {
+		 if(RC_CtrlData.rc.s1==3&RC_CtrlData.rc.s2==3)
+		 { 
 		 change1= (RC2_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c);
 		 x=- (RC2_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
 		 y=- (RC2_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
 		 h=(RC2_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
+		 }
+		 else
+		{
+		change1= (RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c);
+		 x=- (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
+		 y=- (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
+		 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
 		 }
 
 		 posloop_out[1]=x+change1;
@@ -66,7 +98,7 @@ u8 pData222[30];
 
     for (i=1;i<=3;i++)
 		 {
-    buff_3510iq[i]=pid_calc(&pid_spd[i], moto_chassis[i].speed_rpm,
+			buff_3510iq[i]=pid_calc(&pid_spd[i], moto_chassis[i].speed_rpm,
 																	posloop_out[i]);
 
 		 }

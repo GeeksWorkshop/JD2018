@@ -28,6 +28,9 @@
 
 
 moto_measure_t moto_chassis[4] = { 0 }; //4 chassis moto
+
+int UpDownPlatform_Motor[2];
+
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 {
 
@@ -119,8 +122,12 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
    CAN_Receive(CAN1, 0, &RxMessage);
  	 CanReceiveMsgProcess(&RxMessage);
 	 CAN_FIFORelease(CAN1,CAN_FIFO0);
-
+		if(RxMessage.StdId==0x201)
+					 { UpDownPlatform_Motor[0] =(int16_t)((RxMessage.Data[0]<<8)|(RxMessage.Data[1]));
+					   UpDownPlatform_Motor[1] =(int16_t)((RxMessage.Data[2]<<8)|(RxMessage.Data[3]));
+					 }
    }
+   
 }
 
 void USB_HP_CAN1_TX_IRQHandler(void)
