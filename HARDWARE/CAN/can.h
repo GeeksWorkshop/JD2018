@@ -46,6 +46,15 @@ u8 Can_Receive_Msg(u8 *buf);							//接收数据
     uint16_t last_angle; //abs angle range:[0,8191]
 } moto_measure_t;
 
+typedef struct PlatformMotor_t
+{
+int Pos_Last;
+int Pos_Now;
+int Pos_Diff;
+int CircleNum;
+void (*CircleCalc)(struct PlatformMotor_t *PM);//函数指针
+}PlatformMotor;
+
 void CanReceiveMsgProcess(CanRxMsg * msg);
 void get_moto_offset(moto_measure_t* ptr,CanRxMsg * msg);
 void get_moto_measure(moto_measure_t* ptr, CanRxMsg * msg);
@@ -69,7 +78,9 @@ typedef struct{
 }Encoder;
 #endif
 
+void PlatformCircle(PlatformMotor *PM);
 
+extern PlatformMotor PMotor;
 
 
 

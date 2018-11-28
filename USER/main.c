@@ -9,7 +9,7 @@ vs16 y=0;
 vs16 h=0;
 u8 pData222[30];
  int main(void)
- { 
+                                  { 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//???????????2:2??????,2??????
 	delay_init();	    	
 	LED_Init();		  		
@@ -23,7 +23,7 @@ u8 pData222[30];
  	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_2tq,CAN_BS1_3tq,6,CAN_Mode_Normal);//CAN???????,???1Mbps    
   delay_ms(1000);
 	chassis_pid_param_init();	 
-	 
+	 TIM4_Configuration();
 	 RC_CtrlData.rc.ch3=0x400;
 	 RC_CtrlData.rc.ch2=0x400;
 	 RC_CtrlData.rc.ch0=0x400;

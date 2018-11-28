@@ -31,6 +31,9 @@ moto_measure_t moto_chassis[4] = { 0 }; //4 chassis moto
 
 int UpDownPlatform_Motor[2];
 
+
+PlatformMotor PMotor={0,0,0,0,&PlatformCircle};
+
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 {
 
@@ -125,13 +128,27 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 		if(RxMessage.StdId==0x201)
 					 { UpDownPlatform_Motor[0] =(int16_t)((RxMessage.Data[0]<<8)|(RxMessage.Data[1]));
 					   UpDownPlatform_Motor[1] =(int16_t)((RxMessage.Data[2]<<8)|(RxMessage.Data[3]));
+
+						 PMotor.Pos_Now=UpDownPlatform_Motor[0];
+						 PMotor.CircleCalc(&PMotor);
+						 PMotor.Pos_Last=PMotor.Pos_Now;
 					 }
    }
    
 }
 
-void USB_HP_CAN1_TX_IRQHandler(void)
+void PlatformCircle(PlatformMotor *PM)
+{
+	PM->Pos_Diff=PM->Pos_Now-PM->Pos_Last;
+	if(PM->Pos_Diff<-5000)
+		PM->CircleNum++;
+	else if(PM->Pos_Diff>5000)
+		PM->CircleNum--;
+	else;
+}
 
+
+void USB_HP_CAN1_TX_IRQHandler(void)
 {
     if (CAN_GetITStatus(CAN1,CAN_IT_TME)!= RESET) 
 	{

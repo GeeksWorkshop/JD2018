@@ -10,6 +10,9 @@
 #include "timer.h"
 #include "can.h"
 #include "pid.h"
+#include "timer7.h"
+#include "chassispid.h"
+
 extern pid_t pid_pos[4];
 extern RC_Ctl_t RC_CtrlData;
 extern RC_Ctl_t RC2_CtrlData;
