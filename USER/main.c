@@ -9,17 +9,17 @@ vs16 y=0;
 vs16 h=0;
 u8 pData222[30];
  int main(void)
-                                  { 
+{ 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//???????????2:2??????,2??????
 	delay_init();	    	
 	LED_Init();		  		
   TIM2_PWM_Init(999,1439);	
 	uart_init(100000);	
-	uart3_init(100000);	 
+	//uart3_init(100000);	 
   delay_ms(1000);
   USART1_DMA_RX();
 	USART3_DMA_RX();
-	 
+	 encoder_init(115200);
  	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_2tq,CAN_BS1_3tq,6,CAN_Mode_Normal);//CAN???????,???1Mbps    
   delay_ms(1000);
 	chassis_pid_param_init();	 
@@ -34,7 +34,7 @@ u8 pData222[30];
 	 RC2_CtrlData.rc.ch0=0x400;
 	 RC2_CtrlData.rc.ch1=0x400;
 	 
-	 TIM_SetCompare2(TIM2,0);
+
 	 
 	 while(1)		 
 	 {
@@ -45,37 +45,6 @@ u8 pData222[30];
 		 y=- (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
 		 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
 
-		 			 if(RC_CtrlData.rc.s1==2)
-						{
-						GPIO_SetBits(GPIOA,GPIO_Pin_1);
-						GPIO_ResetBits(GPIOA,GPIO_Pin_0);
-						}
-						if(RC_CtrlData.rc.s1==1)
-						{
-						GPIO_SetBits(GPIOA,GPIO_Pin_0);
-						GPIO_ResetBits(GPIOA,GPIO_Pin_1);
-						}	
-						if(RC_CtrlData.rc.s1==3)
-						{
-						GPIO_SetBits(GPIOA,GPIO_Pin_0);
-						GPIO_SetBits(GPIOA,GPIO_Pin_1);
-						}		
-						
-			if(RC_CtrlData.rc.s2==2)
-			{
-			GPIO_SetBits(GPIOA,GPIO_Pin_2);
-			GPIO_ResetBits(GPIOA,GPIO_Pin_3);
-			}
-			if(RC_CtrlData.rc.s2==1)
-			{
-			GPIO_SetBits(GPIOA,GPIO_Pin_3);
-			GPIO_ResetBits(GPIOA,GPIO_Pin_2);
-			}	
-			if(RC_CtrlData.rc.s2==3)
-			{
-			GPIO_SetBits(GPIOA,GPIO_Pin_3);
-			GPIO_SetBits(GPIOA,GPIO_Pin_2);
-			}			
 		 
 		 if(RC_CtrlData.rc.s1==3&RC_CtrlData.rc.s2==3)
 		 { 

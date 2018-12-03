@@ -23,7 +23,8 @@ void TIM4_Configuration(void)    //2ms中断
 }
 
 float input  =0 ;
-
+int chassis_data_order[4]={0};
+int motordata[4][2];
 void TIM4_IRQHandler(void)  
 {
 		
@@ -34,7 +35,27 @@ void TIM4_IRQHandler(void)
 //			
 //			  chassiscontrol();
 //			  updownplatform_control();
-
+		chassispid[0].SetPoint=chassis_data_order[0];
+				chassispid[1].SetPoint=chassis_data_order[1];
+				chassispid[2].SetPoint=chassis_data_order[2];
+				chassispid[3].SetPoint=chassis_data_order[3];		
+			  chassispid[0].Input=motordata[0][1];
+			  chassispid[1].Input=motordata[1][1];
+			  chassispid[2].Input=motordata[2][1];
+			  chassispid[3].Input=motordata[3][1];
+			  PidCalc(&chassispid[0]);
+			  PidCalc(&chassispid[1]);
+			  PidCalc(&chassispid[2]);
+			  PidCalc(&chassispid[3]);
+			
+//				updownplatformpid.Input=UpDownPlatform_Motor[1];
+//			  PidCalc(&updownplatformpid);
+//				
+//			  chassis_data[0]=chassispid[0].Output;
+//				chassis_data[1]=chassispid[1].Output;
+//				chassis_data[2]=chassispid[2].Output;
+//				chassis_data[3]=chassispid[3].Output;
+//				UpDownPlatform_data=updownplatformpid.Output;
 			
 			// 轮子PID速度环
 

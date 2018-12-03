@@ -13,8 +13,8 @@
 //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
 //All rights reserved									  
 ////////////////////////////////////////////////////////////////////////////////// 
-#define LED0 PCout(8)	// PA8
-#define LED1 PCout(7)	// PD2	
+#define LED0 PBout(13)	// PA8
+#define LED1 PBout(12)	// PD2	
 
 void LED_Init(void);//初始化
 
