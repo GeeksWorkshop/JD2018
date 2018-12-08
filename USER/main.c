@@ -3,8 +3,13 @@
 
 
 u8 pData222[30];
-int led_flag=0;
-
+u8 led_flag=0,yyyy,yyyy2;
+vs16 ssss,ssss2;
+float change,change2;
+unsigned char temp[4];
+unsigned char ii=0; 
+		
+unsigned char *pdata = (unsigned char *)&change;
  int main(void)
  { 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//???????????2:2??????,2??????
@@ -42,7 +47,8 @@ int led_flag=0;
 			 RC2_CtrlData.rc.ch2=0x400;
 			 RC2_CtrlData.rc.ch0=0x400;
 			 RC2_CtrlData.rc.ch1=0x400;
-
+			change=-600;
+		
 	 while(1)		 
 	 {
 				led_flag++;
@@ -52,21 +58,24 @@ int led_flag=0;
 					 LED0=!LED0;
 					 LED1=!LED1;
 						 
-//						 	USART3->DR=0x0a;
-//							delay_ms(1);	
-//						 	USART3->DR=0x11;						 
-//							delay_ms(1);	
-//							USART3->DR=0x55;
-//							delay_ms(1);
-//							USART3->DR=0xaa;
-//							delay_ms(1);
-//							USART3->DR=0x55;
-//							delay_ms(1);
-//							USART3->DR=0xaa;
-//							delay_ms(1);
-//						 	USART3->DR=0x11;
-//							delay_ms(1);
-//							USART3->DR=0xa0;	
+					pdata=
+						 // ---
+						temp[0] = *pdata;//float?BYTE
+						temp[1] = *(pdata+1);
+						temp[2] = *(pdata+2);
+						temp[3] = *(pdata+3);
+
+					for(ii=0;ii<4;ii++)  
+					{  
+						USART_SendData(USART3, temp[ii]);
+						delay_ms(3);
+					}  
+
+						 // ---
+						 
+						 
+
+						 
 					 }
 				delay_ms(5);
 		}	 
