@@ -22,10 +22,15 @@ void uart3_init(u32 bound){
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//上拉输入
   GPIO_Init(GPIOB, &GPIO_InitStructure);//初始化GPIOA.10  
 
+	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;//PA11
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);//初始化GPIOA.11 
+	
   //Usart1 NVIC 配置
   NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=1 ;//抢占优先级3
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;		//子优先级3
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化VIC寄存器
   
@@ -36,7 +41,7 @@ void uart3_init(u32 bound){
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;//一个停止位
 	USART_InitStructure.USART_Parity = USART_Parity_Even;//无奇偶校验位
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
-	USART_InitStructure.USART_Mode = USART_Mode_Rx  ;	//收模式
+	USART_InitStructure.USART_Mode = USART_Mode_Rx|USART_Mode_Tx ;	//收模式
 
   USART_Init(USART3, &USART_InitStructure); //初始化串口1
   USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);//开启串口空闲中断

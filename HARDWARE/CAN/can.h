@@ -61,6 +61,8 @@ void get_moto_measure(moto_measure_t* ptr, CanRxMsg * msg);
 void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq);
 
 
+extern int motordata[4][2];
+
 #define RATE_BUF_SIZE 6
 typedef struct{
 	int32_t raw_value;   									//编码器不经处理的原始值

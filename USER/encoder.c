@@ -4,14 +4,22 @@
 
 uint8_t ReadReceiveBuffer[READ_BUFFER_SIZE] = {0};
 
-float pos_x=0;
-float pos_y=0;
-float zangle=0;
-float xangle=0;
-float yangle=0;
+volatile float pos_x;
+volatile float pos_y;
+volatile float zangle;
+volatile float xangle=0;
+volatile float yangle=0;
 float w_z=0;
 static uint8_t count=0;
 static uint8_t i=0;
+
+
+static union
+{
+	uint8_t data[24];
+	volatile float ActVal[6];
+}posture;
+
 
 void encoder_init(u32 bound)
 {
@@ -47,7 +55,7 @@ void encoder_init(u32 bound)
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;//一个停止位
 	USART_InitStructure.USART_Parity = USART_Parity_No;//无奇偶校验位
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
-	USART_InitStructure.USART_Mode = USART_Mode_Tx|USART_Mode_Rx;	//收发模式
+	USART_InitStructure.USART_Mode = USART_Mode_Rx;	//收发模式
   USART_Init(USART2, &USART_InitStructure); //初始化串口3
 	
 //	USART_DMACmd(USART3,USART_DMAReq_Rx,ENABLE);  
@@ -98,11 +106,7 @@ void encoder_init(u32 bound)
 void USART2_IRQHandler(void)
 {
 	static uint8_t ch;
-	static union
-	{
-		uint8_t data[24];
-		float ActVal[6];
-	}posture;
+
  if(USART_GetITStatus(USART2, USART_IT_RXNE)!= RESET)
 	{
 		USART_ClearITPendingBit( USART2,USART_IT_RXNE);

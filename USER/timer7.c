@@ -1,4 +1,22 @@
 #include "timer7.h"
+#include "main.h"
+#include "encoder.h"
+
+float change1;
+float x=0;
+float y=0;
+float h=0;
+
+
+float xPIDout,yPIDout,change1PIDout,hPIDout;
+
+int speed_ref=100;
+int current_out=0; 
+int i=0;
+
+s16 buff_3510iq[4],posloop_out[4];
+s16 pos_ref[4]={1000,1000,1000,1000};
+
 
 void TIM4_Configuration(void)    //2ms中断
 {
@@ -8,7 +26,7 @@ void TIM4_Configuration(void)    //2ms中断
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
     
     nvic.NVIC_IRQChannel = TIM4_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 1;
+    nvic.NVIC_IRQChannelPreemptionPriority = 2;
     nvic.NVIC_IRQChannelSubPriority = 1;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
@@ -24,46 +42,63 @@ void TIM4_Configuration(void)    //2ms中断
 
 float input  =0 ;
 int chassis_data_order[4]={0};
-int motordata[4][2];
+
 void TIM4_IRQHandler(void)  
 {
-		
+	
+
+	
     if (TIM_GetITStatus(TIM4,TIM_IT_Update)!= RESET) 
 		{
         TIM_ClearITPendingBit(TIM4,TIM_IT_Update);
         TIM_ClearFlag(TIM4, TIM_FLAG_Update);	
-//			
-//			  chassiscontrol();
-//			  updownplatform_control();
-		chassispid[0].SetPoint=chassis_data_order[0];
-				chassispid[1].SetPoint=chassis_data_order[1];
-				chassispid[2].SetPoint=chassis_data_order[2];
-				chassispid[3].SetPoint=chassis_data_order[3];		
-			  chassispid[0].Input=motordata[0][1];
-			  chassispid[1].Input=motordata[1][1];
-			  chassispid[2].Input=motordata[2][1];
-			  chassispid[3].Input=motordata[3][1];
-			  PidCalc(&chassispid[0]);
-			  PidCalc(&chassispid[1]);
-			  PidCalc(&chassispid[2]);
-			  PidCalc(&chassispid[3]);
-			
-//				updownplatformpid.Input=UpDownPlatform_Motor[1];
-//			  PidCalc(&updownplatformpid);
-//				
-//			  chassis_data[0]=chassispid[0].Output;
-//				chassis_data[1]=chassispid[1].Output;
-//				chassis_data[2]=chassispid[2].Output;
-//				chassis_data[3]=chassispid[3].Output;
-//				UpDownPlatform_data=updownplatformpid.Output;
-			
-			// 轮子PID速度环
+		 
 
-//			
-//				updownplatformpid.Input=UpDownPlatform_Motor[1];
-			  PidCalc(&updownplatformpid);
+				change1=(RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c)*0.1;
+				 x= (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
+				 y= (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
+				 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
 
-//				UpDownPlatform_data=updownplatformpid.Output;
+		if(RC_CtrlData.rc.s1==3)
+		{
+		 posloop_out[0]=h*5;
+		 posloop_out[1]=-x+change1*20;
+		 posloop_out[2]=x/2-y*0.866+change1*20;
+		 posloop_out[3]=x/2+y*0.866+change1*20;	 		
+		}
+		else
+		{
+					 //位置环
+	
+		 hPIDout=pid_calc(&pid_pos[0],PMotor.CircleNum,h/10);//h
+			
+		 change1PIDout=pid_calc(&pid_pos[1], -zangle,change1);//zangle
+		 xPIDout=pid_calc(&pid_pos[2], pos_x,x);//x
+		 yPIDout=pid_calc(&pid_pos[3], pos_y,y);//y	
+			posloop_out[0]=hPIDout;
+					 //矩阵变换
+		 posloop_out[1]=xPIDout+change1PIDout;
+		 posloop_out[2]=-xPIDout/2+yPIDout*0.866+change1PIDout;
+		 posloop_out[3]=-xPIDout/2-yPIDout*0.866+change1PIDout;	 			
+		}
+
+		buff_3510iq[0]=pid_calc(&pid_spd[0], motordata[0][1],
+																			posloop_out[0]);		 
+				 //速度环	 
+				for (i=1;i<=3;i++)
+				 {
+					buff_3510iq[i]=pid_calc(&pid_spd[i], motordata[i][1],
+																			posloop_out[i]);
+				 }
+			
+			if(RC_CtrlData.rc.s1==2)
+			{	
+			Set_CM_Speed(CAN1,buff_3510iq[0],0,0,0);
+			}
+			else
+			{
+			Set_CM_Speed(CAN1,buff_3510iq[0],buff_3510iq[1],buff_3510iq[2],buff_3510iq[3]);
 			}
 			
+		}
 }

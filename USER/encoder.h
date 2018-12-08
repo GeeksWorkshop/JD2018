@@ -16,7 +16,7 @@
 
 
 #define READ_BUFFER_SIZE      28
-
+#include "main.h"	
 #include "stdio.h"	
 #include "stm32f10x.h"
 #include <sys.h>	
@@ -24,8 +24,11 @@
 	
 void encoder_init(u32 bound);
 void USART2_IRQHandler(void);
+
 //void DMA1_Stream1_IRQHandler(void);
 
 
-
+extern volatile float pos_x;
+extern volatile float pos_y;
+extern volatile float zangle;
 #endif
