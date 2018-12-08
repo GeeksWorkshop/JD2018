@@ -4,7 +4,7 @@
 
 u8 pData222[30];
 u8 led_flag=0,yyyy,yyyy2;
-vs16 ssss,ssss2;
+vs16 invv;
 float change,change2;
 unsigned char temp[4];
 unsigned char ii=0; 
@@ -57,19 +57,32 @@ unsigned char *pdata = (unsigned char *)&change;
 					 led_flag=0;
 					 LED0=!LED0;
 					 LED1=!LED1;
+					USART3->DR=0x11;
+					delay_ms(3);
+					USART3->DR=0x0a;  
+					delay_ms(3);
+					invv=(s16)(pos_x*10);
+					USART3->DR=invv&0xff;
+					delay_ms(3);
+					USART3->DR=invv>>8&0xff;
+					delay_ms(3);
+					
+					invv=(s16)(pos_y*10);
+					USART3->DR=invv&0xff;
+					delay_ms(3);
+					USART3->DR=invv>>8&0xff;
+					delay_ms(3);
 						 
-					pdata=
-						 // ---
-						temp[0] = *pdata;//float?BYTE
-						temp[1] = *(pdata+1);
-						temp[2] = *(pdata+2);
-						temp[3] = *(pdata+3);
-
-					for(ii=0;ii<4;ii++)  
-					{  
-						USART_SendData(USART3, temp[ii]);
-						delay_ms(3);
-					}  
+					invv=(s16)(zangle*10);
+					USART3->DR=invv&0xff;
+					delay_ms(3);
+					USART3->DR=invv>>8&0xff;
+					delay_ms(3);				
+					
+					USART3->DR=0x11;
+					delay_ms(3);
+					USART3->DR=0xa0;  
+					delay_ms(3);						 
 
 						 // ---
 						 
