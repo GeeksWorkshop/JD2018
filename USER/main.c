@@ -67,7 +67,8 @@ unsigned char *pdata = (unsigned char *)&change;
 					USART3->DR=invv>>8&0xff;
 					delay_ms(3);
 					
-					invv=(s16)(pos_y*10);
+		
+						 invv=(s16)(pos_y*10);
 					USART3->DR=invv&0xff;
 					delay_ms(3);
 					USART3->DR=invv>>8&0xff;

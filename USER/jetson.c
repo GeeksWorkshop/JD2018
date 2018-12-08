@@ -105,23 +105,35 @@ void RemoteDataPrcess2(uint8_t *pData)
 			    pData222[ii]=pData[ii];
 		}
 
-    RC2_CtrlData.rc.ch0 = ((int16_t)pData[0] | ((int16_t)pData[1] << 8)) & 0x07FF; 
-    RC2_CtrlData.rc.ch1 = (((int16_t)pData[1] >> 3) | ((int16_t)pData[2] << 5)) & 0x07FF;
-    RC2_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
-                         ((int16_t)pData[4] << 10)) & 0x07FF;
-    RC2_CtrlData.rc.ch3 = (((int16_t)pData[4] >> 1) | ((int16_t)pData[5]<<7)) & 0x07FF;
-    
-    RC2_CtrlData.rc.s1 = ((pData[5] >> 4) & 0x000C) >> 2;
-    RC2_CtrlData.rc.s2 = ((pData[5] >> 4) & 0x0003);
+	    RC2_CtrlData.rc.ch0 = (int16_t)pData[0]|((int16_t)pData[1] << 8);//a 
+			RC2_CtrlData.rc.ch1 = (int16_t)pData[2]|((int16_t)pData[3] << 8);//h
+		  RC2_CtrlData.rc.ch2 = ((int16_t)pData[4]|((int16_t)pData[5] << 8)); //x
+			RC2_CtrlData.rc.ch3 = ((int16_t)pData[6]|((int16_t)pData[7] << 8)); //y
+			RC2_CtrlData.rc.s1=(int16_t)pData[8];
 
-    RC2_CtrlData.mouse.x = ((int16_t)pData[6]) | ((int16_t)pData[7] << 8);
-    RC2_CtrlData.mouse.y = ((int16_t)pData[8]) | ((int16_t)pData[9] << 8);
-    RC2_CtrlData.mouse.z = ((int16_t)pData[10]) | ((int16_t)pData[11] << 8);    
+		RC2_CtrlData.rc.s2=(int16_t)pData[9];
+//			RC2_CtrlData.rc.ch1 = (((int16_t)pData[1]|((int16_t)pData[2] << 8));
+//    RC2_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
+//                         ((int16_t)pData[4] << 10)) & 0x07FF;
+//    RC2_CtrlData.rc.ch3 = (((int16_t)pData[4] >> 1) | ((int16_t)pData[5]<<7)) & 0x07FF;
+//    RC2_CtrlData.rc.ch0 = ((int16_t)pData[0] | ((int16_t)pData[1] << 8)) & 0x07FF; 
+//    RC2_CtrlData.rc.ch1 = (((int16_t)pData[1] >> 3) | ((int16_t)pData[2] << 5)) & 0x07FF;
+//    RC2_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
+//                         ((int16_t)pData[4] << 10)) & 0x07FF;
+//    RC2_CtrlData.rc.ch3 = (((int16_t)pData[4] >> 1) | ((int16_t)pData[5]<<7)) & 0x07FF;
+//    
+//    RC2_CtrlData.rc.s1 = ((pData[5] >> 4) & 0x000C) >> 2;
+//    RC2_CtrlData.rc.s2 = ((pData[5] >> 4) & 0x0003);
 
-    RC2_CtrlData.mouse.press_l = pData[12];
-    RC2_CtrlData.mouse.press_r = pData[13];
- 
-    RC2_CtrlData.key.v = ((int16_t)pData[14]);// | ((int16_t)pData[15] << 8);
+//    RC2_CtrlData.mouse.x = ((int16_t)pData[6]) | ((int16_t)pData[7] << 8);
+//    RC2_CtrlData.mouse.y = ((int16_t)pData[8]) | ((int16_t)pData[9] << 8);
+//    RC2_CtrlData.mouse.z = ((int16_t)pData[10]) | ((int16_t)pData[11] << 8);    
+
+//    RC2_CtrlData.mouse.press_l = pData[12];
+//    RC2_CtrlData.mouse.press_r = pData[13];
+// 
+//    RC2_CtrlData.key.v = ((int16_t)pData[14]);
+		// | ((int16_t)pData[15] << 8);
 	
 }
 

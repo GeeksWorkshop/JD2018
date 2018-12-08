@@ -55,12 +55,51 @@ void TIM4_IRQHandler(void)
 		 
 
 				change1=(RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c)*0.1;
+			if(RC_CtrlData.rc.s2==1)
+			{
 				 x= (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
 				 y= (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
 				 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
-
+			}
+			else
+			{
+				 x= RC2_CtrlData.rc.ch2;
+				 y= RC2_CtrlData.rc.ch3;
+				 change1=RC2_CtrlData.rc.ch0;				
+				 h=RC2_CtrlData.rc.ch1;
+			}
+			
 		if(RC_CtrlData.rc.s1==3)
 		{
+			
+			
+			if(change1>=90)
+			{
+				change1=90;
+			}
+			if(change1<=-90)
+			{
+				change1=-90;
+			}		
+			
+			if(y>=100)
+			{
+				y=100;
+			}
+			if(y<=-100)
+			{
+				y=-100;
+			}			
+			
+				if(x>=100)
+			{
+				x=100;
+			}
+			if(x<=-10)
+			{
+				x=-10;
+			}		
+			
 		 posloop_out[0]=h*5;
 		 posloop_out[1]=-x+change1*20;
 		 posloop_out[2]=x/2-y*0.866+change1*20;
