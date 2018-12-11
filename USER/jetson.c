@@ -111,8 +111,8 @@ void RemoteDataPrcess2(uint8_t *pData)
 			RC2_CtrlData.rc.ch3 = ((int16_t)pData[6]|((int16_t)pData[7] << 8)); //y
 			RC2_CtrlData.rc.s1=(int16_t)pData[8];
 
-		RC2_CtrlData.rc.s2=(int16_t)pData[9];
-//			RC2_CtrlData.rc.ch1 = (((int16_t)pData[1]|((int16_t)pData[2] << 8));
+			RC2_CtrlData.rc.s2=(int16_t)pData[9];
+//		RC2_CtrlData.rc.ch1 = (((int16_t)pData[1]|((int16_t)pData[2] << 8));
 //    RC2_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
 //                         ((int16_t)pData[4] << 10)) & 0x07FF;
 //    RC2_CtrlData.rc.ch3 = (((int16_t)pData[4] >> 1) | ((int16_t)pData[5]<<7)) & 0x07FF;
