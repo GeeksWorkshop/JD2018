@@ -13,6 +13,8 @@
 #include "timer7.h"
 #include "chassispid.h"
 
+#include "flash.h"
+
 extern pid_t pid_pos[4];
 extern RC_Ctl_t RC_CtrlData;
 extern RC_Ctl_t RC2_CtrlData;

@@ -49,7 +49,11 @@ void TIM4_IRQHandler(void)
 
 	if(sennn0==0)
 	{
-		PMotor.CircleNum=0;
+		PMotor.CircleNum=50;
+	}
+	if(sennn1==0)
+	{
+		PMotor.CircleNum=2080;
 	}
 	
 	
@@ -91,6 +95,23 @@ void TIM4_IRQHandler(void)
 						 y= RC2_CtrlData.rc.ch3;
 						 change1=RC2_CtrlData.rc.ch0;				
 						 h=RC2_CtrlData.rc.ch1;
+						
+								if(RC2_CtrlData.rc.s2==0x1)//前进
+								{
+								GPIO_SetBits(GPIOA,GPIO_Pin_0);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+								}else if(RC2_CtrlData.rc.s2==0x2)//回退
+								{
+								GPIO_SetBits(GPIOA,GPIO_Pin_1);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_0);
+								}
+								else//不动
+								{
+								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_0);									
+								}
+						
+						
 					}
 					
 					if(h<=0)
@@ -119,23 +140,33 @@ void TIM4_IRQHandler(void)
 			if(RC_CtrlData.rc.s1==2)
 			{	
 				Set_CM_Speed(CAN1,0,0,0,0);
-								if(RC_CtrlData.rc.ch3>0x500)
+								if(RC_CtrlData.rc.ch3>0x500)//前进
 								{
-								GPIO_SetBits(GPIOA,GPIO_Pin_6);
-								GPIO_ResetBits(GPIOA,GPIO_Pin_7);
-								}else if(RC_CtrlData.rc.ch3<0x300)
+								GPIO_SetBits(GPIOA,GPIO_Pin_0);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+								}else if(RC_CtrlData.rc.ch3<0x300)//回退
 								{
-								GPIO_SetBits(GPIOA,GPIO_Pin_7);
-								GPIO_ResetBits(GPIOA,GPIO_Pin_6);
+								GPIO_SetBits(GPIOA,GPIO_Pin_1);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_0);
 								}
-								else
+								else//不动
 								{
-								GPIO_ResetBits(GPIOA,GPIO_Pin_7);
-								GPIO_ResetBits(GPIOA,GPIO_Pin_6);									
+								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+								GPIO_ResetBits(GPIOA,GPIO_Pin_0);									
 								}
 			}	
 			else
 			{
+					if(PMotor.CircleNum<=0&buff_3510iq[0]<0)
+					{
+						buff_3510iq[0]=0;
+					}
+					if(PMotor.CircleNum>=2030&buff_3510iq[0]>0)
+					{
+						buff_3510iq[0]=0;
+					}				
+					
+				
 			Set_CM_Speed(CAN1,buff_3510iq[0],buff_3510iq[1],buff_3510iq[2],buff_3510iq[3]);
 			}
 			
