@@ -112,14 +112,14 @@ void chassis_pid_param_init(void)
 
 	PID_struct_init(&pid_pos[0], POSITION_PID, 15000, 0, 60, 0.0f, 0.0f);//h
 	
-	PID_struct_init(&pid_pos[1], POSITION_PID, 3000, 660,55, 0.06f, 0.6f);//角度
-	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 330, -50.60f, -0.02f, -8.4f);//x
-	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 330, -50.60f, -0.02f, -8.4f);//	y
+	PID_struct_init(&pid_pos[1], POSITION_PID, 3000, 100,55, 0.15f, 0.9f);//角度
+	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 330, -50.60f, -0.001f, -8.4f);//x
+	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 330, -50.60f, -0.001f, -8.4f);//	y
 	
 	PID_struct_init(&pid_spd[0], POSITION_PID, 10000, 5000, 10, 0.00f, 0.0f);//底盘电机
-	PID_struct_init(&pid_spd[1], POSITION_PID, 10000, 5000, 10, 0.003f, 0.13f);//底盘电机
-	PID_struct_init(&pid_spd[2], POSITION_PID, 10000, 5000, 10, 0.003f, 0.13f);//底盘电机
-	PID_struct_init(&pid_spd[3], POSITION_PID,10000, 5000, 10, 0.003f, 0.13f);//底盘电机
+	PID_struct_init(&pid_spd[1], POSITION_PID, 10000, 5000, 8, 0.002f, 0.08f);//底盘电机
+	PID_struct_init(&pid_spd[2], POSITION_PID, 10000, 5000, 8, 0.002f, 0.08f);//底盘电机
+	PID_struct_init(&pid_spd[3], POSITION_PID,10000, 5000, 8, 0.002f, 0.08f);//底盘电机
 	
 	//void PID_struct_init(pid,mode,maxout,intergral_limit,kp,ki,kd)
 }

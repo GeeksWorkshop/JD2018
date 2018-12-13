@@ -456,11 +456,6 @@
               <FilePath>.\chassispid.c</FilePath>
             </File>
             <File>
-              <FileName>Control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Control.c</FilePath>
-            </File>
-            <File>
               <FileName>timer7.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer7.c</FilePath>

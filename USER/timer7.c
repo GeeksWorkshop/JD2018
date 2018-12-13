@@ -5,7 +5,7 @@
 float change1;
 float x=0;
 float y=0;
-float h=0;
+float high=200;
 
 
 float xPIDout,yPIDout,change1PIDout,hPIDout;
@@ -64,19 +64,19 @@ void TIM4_IRQHandler(void)
 		 
 
 
-			//屏蔽位置环，直接控制
+			//速度环控制，屏蔽位置环，直接控制
 		if(RC_CtrlData.rc.s1==3)
 		{
 					 x= (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
 					 y= (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
-					 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
+					 high=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
 					 change1=(RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c)*0.1;		
-					 posloop_out[0]=h*5;
+					 posloop_out[0]=high;
 					 posloop_out[1]=-x+change1*20;
 					 posloop_out[2]=x/2-y*0.866+change1*20;
 					 posloop_out[3]=x/2+y*0.866+change1*20;	 		
 		}
-		//位置环
+		//加入位置控制
 		if(RC_CtrlData.rc.s1==1)
 		{
 					
@@ -86,7 +86,7 @@ void TIM4_IRQHandler(void)
 					{
 						 x= (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
 						 y= (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
-						 h=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
+						 high=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c)+200;//默认启动位置200 高度200
 						 change1=(RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c)*0.1;		
 					}
 					if(RC_CtrlData.rc.s2==2)//jetson控制位置
@@ -94,7 +94,7 @@ void TIM4_IRQHandler(void)
 						 x= RC2_CtrlData.rc.ch2;
 						 y= RC2_CtrlData.rc.ch3;
 						 change1=RC2_CtrlData.rc.ch0;				
-						 h=RC2_CtrlData.rc.ch1;
+						 high=RC2_CtrlData.rc.ch1;;//默认启动 会被限幅
 						
 								if(RC2_CtrlData.rc.s2==0x1)//前进
 								{
@@ -114,11 +114,16 @@ void TIM4_IRQHandler(void)
 						
 					}
 					
-					if(h<=0)
-					{h=0;}
-
-						//位置闭环	
-						 hPIDout=pid_calc(&pid_pos[0],PMotor.CircleNum,h/10);//h
+					//位置环输入值限位
+					
+					if(high<=50)
+					{high=50;}
+					if(high>=2050)
+					{high=2050;}
+					
+					
+						//位置环	
+						 hPIDout=pid_calc(&pid_pos[0],PMotor.CircleNum,high);//h
 						 change1PIDout=pid_calc(&pid_pos[1], -zangle,change1);//zangle
 						 xPIDout=pid_calc(&pid_pos[2], pos_x,x);//x
 						 yPIDout=pid_calc(&pid_pos[3], pos_y,y);//y	
@@ -129,17 +134,22 @@ void TIM4_IRQHandler(void)
 						 posloop_out[2]=-xPIDout/2+yPIDout*0.866+change1PIDout;
 						 posloop_out[3]=-xPIDout/2-yPIDout*0.866+change1PIDout;	 			
 		}	 
+		
+		//前面做位置环以及矩阵变换
 				 //速度环	 
 				for (i=0;i<=3;i++)
 				 {
 					buff_3510iq[i]=pid_calc(&pid_spd[i], motordata[i][1],
 																			posloop_out[i]);
 				 }
-			
-			//禁止移动，屏蔽任何控制
+				 
+			//
+			//禁止移动，屏蔽任何电机控制
 			if(RC_CtrlData.rc.s1==2)
 			{	
-				Set_CM_Speed(CAN1,0,0,0,0);
+						Set_CM_Speed(CAN1,0,0,0,0);
+				
+								//推杆控制
 								if(RC_CtrlData.rc.ch3>0x500)//前进
 								{
 								GPIO_SetBits(GPIOA,GPIO_Pin_0);
@@ -154,10 +164,13 @@ void TIM4_IRQHandler(void)
 								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
 								GPIO_ResetBits(GPIOA,GPIO_Pin_0);									
 								}
+								
 			}	
 			else
 			{
-					if(PMotor.CircleNum<=0&buff_3510iq[0]<0)
+				
+				//高度的输出限位
+					if(PMotor.CircleNum<=50&buff_3510iq[0]<0)
 					{
 						buff_3510iq[0]=0;
 					}
