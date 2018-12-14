@@ -55,7 +55,7 @@ u8 Uart3_RX[Usart3_RX_LEN] = {0};
 
 void USART3_IRQHandler(void)
 {
-	static uint32_t this_time_rx_len = 0;
+	static uint32_t this_time_rx_len2 = 0;
 	if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
 	{
 		//clear the idle pending flag 
@@ -65,11 +65,11 @@ void USART3_IRQHandler(void)
     DMA_Cmd(DMA1_Channel3, DISABLE); 
 	//	DMA_ClearFlag( DMA1_FLAG_GL5 );   
   //  this_time_rx_len = BSP_USART1_DMA_RX_BUF_LEN - DMA_GetCurrDataCounter(DMA1_Channel5); //
-	 this_time_rx_len = Usart3_RX_LEN - DMA_GetCurrDataCounter(DMA1_Channel5); //
+	 this_time_rx_len2 = Usart3_RX_LEN - DMA_GetCurrDataCounter(DMA1_Channel3); //
 
 
 		
-		 if(this_time_rx_len == RC_FRAME_LENGTH)
+		 if(this_time_rx_len2 == RC_FRAME_LENGTH)
 			{
 				RemoteDataPrcess2(Uart3_RX);
    //     LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_RC));
@@ -87,7 +87,8 @@ void USART3_IRQHandler(void)
 }
 
 RC_Ctl_t RC2_CtrlData;   //remote control data
-
+//55 00 00 40 01 0A 00 00 00 00 00 AA 00 00 00 00 00 00
+//55 00 00 40 01 0A 00 00 00 00 00 AA 00 00 00 00 00 00
 
 extern u8 pData222[30];
 
@@ -105,13 +106,17 @@ void RemoteDataPrcess2(uint8_t *pData)
 			    pData222[ii]=pData[ii];
 		}
 
-	    RC2_CtrlData.rc.ch0 = (int16_t)pData[0]|((int16_t)pData[1] << 8);//a 
-			RC2_CtrlData.rc.ch1 = (int16_t)pData[2]|((int16_t)pData[3] << 8);//h
-		  RC2_CtrlData.rc.ch2 = ((int16_t)pData[4]|((int16_t)pData[5] << 8)); //x
-			RC2_CtrlData.rc.ch3 = ((int16_t)pData[6]|((int16_t)pData[7] << 8)); //y
-			RC2_CtrlData.rc.s1=(int16_t)pData[8];
+		
+			if((pData[11]==0xaa)&(pData[0]==0x55))
+			{
+	    RC2_CtrlData.rc.ch0 = (int16_t)pData[1]|((int16_t)pData[2] << 8);//a 
+			RC2_CtrlData.rc.ch1 = (int16_t)pData[3]|((int16_t)pData[4] << 8);//h
+		  RC2_CtrlData.rc.ch2 = ((int16_t)pData[5]|((int16_t)pData[6] << 8)); //x
+			RC2_CtrlData.rc.ch3 = ((int16_t)pData[7]|((int16_t)pData[8] << 8)); //y
+			RC2_CtrlData.rc.s1=(int16_t)pData[9];
 
-			RC2_CtrlData.rc.s2=(int16_t)pData[9];
+			RC2_CtrlData.rc.s2=(int16_t)pData[10];
+			}
 //		RC2_CtrlData.rc.ch1 = (((int16_t)pData[1]|((int16_t)pData[2] << 8));
 //    RC2_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
 //                         ((int16_t)pData[4] << 10)) & 0x07FF;

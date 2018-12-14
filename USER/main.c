@@ -31,12 +31,12 @@ u16 counttt[3];
 	
 	LED_Init();		  		
   TIM2_PWM_Init(999,1439);	
+	encoder_init(115200);
 	uart_init(100000);	
-	uart3_init(115200);	 
+	uart3_init(9600);	 
 		USART1_DMA_RX();
 		USART3_DMA_RX();
-	 
-		encoder_init(115200);
+
 		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_2tq,CAN_BS1_3tq,6,CAN_Mode_Normal);//CAN???????,???1Mbps    
 		delay_ms(1000);
 		chassis_pid_param_init();	 
@@ -112,9 +112,13 @@ void chassis_pid_param_init(void)
 
 	PID_struct_init(&pid_pos[0], POSITION_PID, 15000, 0, 60, 0.0f, 0.0f);//h
 	
-	PID_struct_init(&pid_pos[1], POSITION_PID, 3000, 100,55, 0.15f, 0.9f);//角度
-	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 330, -50.60f, -0.001f, -8.4f);//x
-	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 330, -50.60f, -0.001f, -8.4f);//	y
+//	PID_struct_init(&pid_pos[1], POSITION_PID, 3000, 100,30, 0.1f, 1.0f);//角度
+//	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 330, -30.60f, -0.001f, -8.4f);//x
+//	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 330, -30.60f, -0.001f, -8.4f);//	y
+	
+	PID_struct_init(&pid_pos[1], POSITION_PID, 300, 100,20.0, 0.0f, 0.0f);//角度
+	PID_struct_init(&pid_pos[2], POSITION_PID, 800, 130, -30.0f, -0.0f, -0.0f);//x
+	PID_struct_init(&pid_pos[3], POSITION_PID, 800, 130, -30.0f, -0.0f, -0.0f);//	y
 	
 	PID_struct_init(&pid_spd[0], POSITION_PID, 10000, 5000, 10, 0.00f, 0.0f);//底盘电机
 	PID_struct_init(&pid_spd[1], POSITION_PID, 10000, 5000, 8, 0.002f, 0.08f);//底盘电机

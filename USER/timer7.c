@@ -6,7 +6,7 @@ float change1;
 float x=0;
 float y=0;
 float high=200;
-
+float angg_pre;
 
 float xPIDout,yPIDout,change1PIDout,hPIDout;
 
@@ -53,7 +53,7 @@ void TIM4_IRQHandler(void)
 	}
 	if(sennn1==0)
 	{
-		PMotor.CircleNum=2080;
+		PMotor.CircleNum=2050;
 	}
 	
 	
@@ -69,7 +69,7 @@ void TIM4_IRQHandler(void)
 		{
 					 x= (RC_CtrlData.rc.ch2-0x400)*(0xf00)/(0x694-0x16c);
 					 y= (RC_CtrlData.rc.ch3-0x400)*(0xf00)/(0x694-0x16c); 
-					 high=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c);
+					 high=(RC_CtrlData.rc.ch1-0x400)*(0xf00)/(0x694-0x16c)*5;
 					 change1=(RC_CtrlData.rc.ch0-0x400)*(0x600)/(0x694-0x16c)*0.1;		
 					 posloop_out[0]=high;
 					 posloop_out[1]=-x+change1*20;
@@ -95,6 +95,28 @@ void TIM4_IRQHandler(void)
 						 y= RC2_CtrlData.rc.ch3;
 						 change1=RC2_CtrlData.rc.ch0;				
 						 high=RC2_CtrlData.rc.ch1;;//Ä¬ÈÏÆô¶¯ »á±»ÏÞ·ù
+
+						
+						//À¬»øÍ°
+								if(RC2_CtrlData.rc.s1==0x1)//Ç°½ø
+								{
+
+									GPIO_SetBits(GPIOB,GPIO_Pin_7);
+									GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+								}else if(RC2_CtrlData.rc.s1==0x2)//»ØÍË
+								{
+	
+									GPIO_SetBits(GPIOB,GPIO_Pin_6);
+									GPIO_ResetBits(GPIOB,GPIO_Pin_7);
+								}
+								else//²»¶¯
+								{
+								GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+								GPIO_ResetBits(GPIOB,GPIO_Pin_7);									
+								}
+
+						
+
 						
 								if(RC2_CtrlData.rc.s2==0x1)//Ç°½ø
 								{
@@ -123,7 +145,8 @@ void TIM4_IRQHandler(void)
 					
 					
 						//Î»ÖÃ»·	
-						 hPIDout=pid_calc(&pid_pos[0],PMotor.CircleNum,high);//h
+						 hPIDout=pid_calc(&pid_pos[0],PMotor.CircleNum,high);//h¡
+					
 						 change1PIDout=pid_calc(&pid_pos[1], -zangle,change1);//zangle
 						 xPIDout=pid_calc(&pid_pos[2], pos_x,x);//x
 						 yPIDout=pid_calc(&pid_pos[3], pos_y,y);//y	
@@ -164,6 +187,26 @@ void TIM4_IRQHandler(void)
 								GPIO_ResetBits(GPIOA,GPIO_Pin_1);
 								GPIO_ResetBits(GPIOA,GPIO_Pin_0);									
 								}
+								
+								
+								if(RC_CtrlData.rc.ch1>0x500&sennn2==1)//Ç°½ø
+								{
+
+									GPIO_SetBits(GPIOB,GPIO_Pin_7);
+									GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+								}else if(RC_CtrlData.rc.ch1<0x300)//»ØÍË
+								{
+	
+									GPIO_SetBits(GPIOB,GPIO_Pin_6);
+									GPIO_ResetBits(GPIOB,GPIO_Pin_7);
+								}
+								else//²»¶¯
+								{
+								GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+								GPIO_ResetBits(GPIOB,GPIO_Pin_7);									
+								}				
+								
+								
 								
 			}	
 			else

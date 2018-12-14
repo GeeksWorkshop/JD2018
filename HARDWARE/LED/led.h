@@ -20,6 +20,8 @@
 
 #define sennn0 PCin(0)	// PA8
 #define sennn1 PCin(1)	// PA8
+#define sennn2 PCin(2)	// PA8
+#define sennn3 PCin(3)	// PA8
 
 #define LED0 PBout(12)	// PD2	
 
