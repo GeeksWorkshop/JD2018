@@ -5,6 +5,7 @@
 u8 pData222[30];
 u8 led_flag=0,yyyy,yyyy2;
 vs16 invv;
+vs32 invv2;
 float change,change2;
 unsigned char temp[4];
 unsigned char ii=0; 
@@ -51,10 +52,14 @@ u16 counttt[3];
 			 RC2_CtrlData.rc.ch2=0x0;
 			 RC2_CtrlData.rc.ch0=0x0;
 			 RC2_CtrlData.rc.ch1=0x0;
-
+			
 			
 			FLASH_ReadMoreData(0x08008000,counttt,1);
 			PMotor.CircleNum=counttt[0];
+			if(PMotor.CircleNum>0x2000)
+			{
+				PMotor.CircleNum=650;
+			}
 			
 	 while(1)		 
 	 {
@@ -77,22 +82,38 @@ u16 counttt[3];
 					USART3->DR=invv>>8&0xff;
 					delay_ms(2);
 					
-					invv=(s16)(pos_y*10);
-					USART3->DR=invv&0xff;
+					invv2=(s32)(pos_y*10);
+					USART3->DR=invv2&0xff;
 					delay_ms(2);
-					USART3->DR=invv>>8&0xff;
+					USART3->DR=invv2>>8&0xff;
 					delay_ms(2);
-						 
+					USART3->DR=invv2>>16&0xff;
+					delay_ms(2);
+					USART3->DR=invv2>>24&0xff;
+					delay_ms(2);
+					
 					invv=(s16)(zangle*10);
 					USART3->DR=invv&0xff;
 					delay_ms(2);
 					USART3->DR=invv>>8&0xff;
-					delay_ms(2);				
+					delay_ms(2);	
+
+					invv=(u16)(PMotor.CircleNum);
+					USART3->DR=invv&0xff;
+					delay_ms(2);
+					USART3->DR=invv>>8&0xff;
+					delay_ms(2);	
 					
+					USART3->DR=0x00;
+					delay_ms(2);	
+					USART3->DR=sennn4;
+					delay_ms(2);				
+										
 					USART3->DR=0x11;
 					delay_ms(2);
 					USART3->DR=0xa0;  
 					delay_ms(2);	
+					
 					counttt[0]=PMotor.CircleNum;
 					FLASH_WriteMoreData(0x08008000,counttt,1);
 					
@@ -115,14 +136,14 @@ void chassis_pid_param_init(void)
 //	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 330, -30.60f, -0.001f, -8.4f);//x
 //	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 330, -30.60f, -0.001f, -8.4f);//	y
 	
-	PID_struct_init(&pid_pos[1], POSITION_PID, 300, 100,20.0, 0.0f, 0.0f);//角度
-	PID_struct_init(&pid_pos[2], POSITION_PID, 800, 130, -30.0f, -0.0f, -0.0f);//x
-	PID_struct_init(&pid_pos[3], POSITION_PID, 800, 130, -30.0f, -0.0f, -0.0f);//	y
+	PID_struct_init(&pid_pos[1], POSITION_PID, 800, 100,30.0, 0.0f, 0.9f);//角度
+	PID_struct_init(&pid_pos[2], POSITION_PID, 1000, 130, -30.0f, -0.0f, -0.0f);//x
+	PID_struct_init(&pid_pos[3], POSITION_PID, 1000, 130, -30.0f, -0.0f, -0.0f);//	y
 	
-	PID_struct_init(&pid_spd[0], POSITION_PID, 10000, 5000, 10, 0.00f, 0.0f);//底盘电机
-	PID_struct_init(&pid_spd[1], POSITION_PID, 10000, 5000, 8, 0.002f, 0.08f);//底盘电机
-	PID_struct_init(&pid_spd[2], POSITION_PID, 10000, 5000, 8, 0.002f, 0.08f);//底盘电机
-	PID_struct_init(&pid_spd[3], POSITION_PID,10000, 5000, 8, 0.002f, 0.08f);//底盘电机
+	PID_struct_init(&pid_spd[0], POSITION_PID, 3000, 3000, 10, 0.00f, 0.0f);//底盘电机
+	PID_struct_init(&pid_spd[1], POSITION_PID, 10000, 5000, 10, 0.001f, 0.09f);//底盘电机
+	PID_struct_init(&pid_spd[2], POSITION_PID, 10000, 5000, 10, 0.001f, 0.09f);//底盘电机
+	PID_struct_init(&pid_spd[3], POSITION_PID,10000, 5000, 10, 0.001f, 0.09f);//底盘电机
 	
 	//void PID_struct_init(pid,mode,maxout,intergral_limit,kp,ki,kd)
 }

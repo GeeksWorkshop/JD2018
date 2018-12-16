@@ -3,6 +3,9 @@
 #include "encoder.h"
 #include "my_sin.h"
 
+#define High_Max 1400
+#define High_Min 50
+
 
 float change1;
 float x=0;
@@ -49,15 +52,22 @@ void TIM4_IRQHandler(void)
 {
 	
 
-	if(sennn0==0)
-	{
-		PMotor.CircleNum=50;
-	}
-	if(sennn1==0)
-	{
-		PMotor.CircleNum=2050;
-	}
+//	if(sennn0==0)
+//	{
+//		PMotor.CircleNum=High_Min;
+//	}
+//	if(sennn1==0)
+//	{
+//		PMotor.CircleNum=High_Max;
+//	}
 	
+	if(RC_CtrlData.rc.s1==2)
+	{
+		if((RC_CtrlData.rc.ch0==0x16c)&(RC_CtrlData.rc.ch1==0x16c)&(RC_CtrlData.rc.ch3==0x16c)&(RC_CtrlData.rc.ch2==0x694))
+		{
+			PMotor.CircleNum=650;
+		}
+	}
 	
     if (TIM_GetITStatus(TIM4,TIM_IT_Update)!= RESET) 
 		{
@@ -146,10 +156,10 @@ void TIM4_IRQHandler(void)
 					
 					//位置环输入值限位
 					
-					if(high<=50)
-					{high=50;}
-					if(high>=1300)
-					{high=1300;}
+					if(high<=High_Min)
+					{high=High_Min;}
+					if(high>=High_Max)
+					{high=High_Max;}
 					
 					
 						//位置环	
@@ -238,11 +248,11 @@ void TIM4_IRQHandler(void)
 			{
 				
 				//高度的输出限位
-					if(PMotor.CircleNum<=50&buff_3510iq[0]<0)
+					if(sennn0==0&buff_3510iq[0]<0)
 					{
 						buff_3510iq[0]=0;
 					}
-					if(PMotor.CircleNum>=1300&buff_3510iq[0]>0)
+					if(sennn1==0&buff_3510iq[0]>0)
 					{
 						buff_3510iq[0]=0;
 					}				

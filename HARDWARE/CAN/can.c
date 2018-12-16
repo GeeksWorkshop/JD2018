@@ -35,8 +35,8 @@ int motordata[4][2];
 CanRxMsg can1_rx_message;
 CanTxMsg can1_tx_message;
 
-
-
+vs32 difffff=0;
+vs32 latchhhh=2050;
 PlatformMotor PMotor={0,0,0,0,&PlatformCircle};
 
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
@@ -141,7 +141,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 					               motordata[3][1] =(int16_t)((rx_message.Data[2]<<8)|(rx_message.Data[3]));}
 												
 						 PMotor.Pos_Now=motordata[0][0];
+												 
 						 PMotor.CircleCalc(&PMotor);
+						difffff=PMotor.Pos_Now-PMotor.Pos_Last;
 						 PMotor.Pos_Last=PMotor.Pos_Now;
     }
 
@@ -151,9 +153,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void PlatformCircle(PlatformMotor *PM)
 {
 	PM->Pos_Diff=PM->Pos_Now-PM->Pos_Last;
-	if(PM->Pos_Diff<-5000)
+	if(PM->Pos_Diff<-latchhhh)
 		PM->CircleNum++;
-	else if(PM->Pos_Diff>5000)
+	else if(PM->Pos_Diff>latchhhh)
 		PM->CircleNum--;
 	else;
 }
