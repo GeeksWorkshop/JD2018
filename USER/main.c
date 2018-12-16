@@ -8,7 +8,7 @@ vs16 invv;
 float change,change2;
 unsigned char temp[4];
 unsigned char ii=0; 
-		
+float		dddd,tangle;
 unsigned char *pdata = (unsigned char *)&change;
 
 u16 counttt[3];
@@ -77,7 +77,6 @@ u16 counttt[3];
 					USART3->DR=invv>>8&0xff;
 					delay_ms(2);
 					
-
 					invv=(s16)(pos_y*10);
 					USART3->DR=invv&0xff;
 					delay_ms(2);

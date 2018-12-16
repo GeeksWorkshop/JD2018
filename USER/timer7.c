@@ -1,6 +1,8 @@
 #include "timer7.h"
 #include "main.h"
 #include "encoder.h"
+#include "my_sin.h"
+
 
 float change1;
 float x=0;
@@ -9,7 +11,7 @@ float high=200;
 float angg_pre;
 
 float xPIDout,yPIDout,change1PIDout,hPIDout;
-
+float xPIDout_pia,yPIDout_pia,change1PIDout,hPIDout;
 int speed_ref=100;
 int current_out=0; 
 int i=0;
@@ -74,7 +76,13 @@ void TIM4_IRQHandler(void)
 					 posloop_out[0]=high;
 					 posloop_out[1]=-x+change1*20;
 					 posloop_out[2]=x/2-y*0.866+change1*20;
-					 posloop_out[3]=x/2+y*0.866+change1*20;	 		
+					 posloop_out[3]=x/2+y*0.866+change1*20;	 
+//						 posloop_out[0]=hPIDout;
+//						 posloop_out[1]=x*my_cos(zangle)+y*my_sin(zangle)+change1PIDout;
+//						 posloop_out[3]=x*my_cos(zangle-120)+y*my_sin(zangle-120)+change1*20;
+//						 posloop_out[2]=x*my_cos(zangle-240)+y*my_sin(zangle-240)+change1*20;	
+
+			
 		}
 		//加入位置控制
 		if(RC_CtrlData.rc.s1==1)
@@ -140,8 +148,8 @@ void TIM4_IRQHandler(void)
 					
 					if(high<=50)
 					{high=50;}
-					if(high>=2050)
-					{high=2050;}
+					if(high>=1300)
+					{high=1300;}
 					
 					
 						//位置环	
@@ -152,10 +160,27 @@ void TIM4_IRQHandler(void)
 						 yPIDout=pid_calc(&pid_pos[3], pos_y,y);//y	
 										
 					 //矩阵变换
-						 posloop_out[0]=hPIDout;
-						 posloop_out[1]=xPIDout+change1PIDout;
-						 posloop_out[2]=-xPIDout/2+yPIDout*0.866+change1PIDout;
-						 posloop_out[3]=-xPIDout/2-yPIDout*0.866+change1PIDout;	 			
+						posloop_out[0]=hPIDout;
+						yPIDout_pia=yPIDout*my_cos(zangle)-xPIDout*my_sin(zangle);
+						xPIDout_pia=yPIDout*my_sin(zangle)+xPIDout*my_cos(zangle);
+						 posloop_out[1]=xPIDout_pia+change1PIDout;
+						 posloop_out[2]=-xPIDout_pia/2+yPIDout_pia*0.866+change1PIDout;
+						 posloop_out[3]=-xPIDout_pia/2-yPIDout_pia*0.866+change1PIDout;	 	
+
+//						 posloop_out[0]=hPIDout;
+//						 posloop_out[1]=xPIDout+change1PIDout;
+//						 posloop_out[2]=-xPIDout/2+yPIDout*0.866+change1PIDout;
+//						 posloop_out[3]=-xPIDout/2-yPIDout*0.866+change1PIDout;	 		
+
+//						 posloop_out[0]=hPIDout;
+//						 posloop_out[1]=xPIDout*my_cos(zangle)+yPIDout*my_sin(zangle)+change1PIDout;
+//						 posloop_out[3]=xPIDout*my_cos(zangle-120)+yPIDout*my_sin(zangle-120)+change1PIDout;
+//						 posloop_out[2]=xPIDout*my_cos(zangle-240)+yPIDout*my_sin(zangle-240)+change1PIDout;	 		
+
+					
+					
+
+					
 		}	 
 		
 		//前面做位置环以及矩阵变换
@@ -194,7 +219,7 @@ void TIM4_IRQHandler(void)
 
 									GPIO_SetBits(GPIOB,GPIO_Pin_7);
 									GPIO_ResetBits(GPIOB,GPIO_Pin_6);
-								}else if(RC_CtrlData.rc.ch1<0x300)//回退
+								}else if(RC_CtrlData.rc.ch1<0x300&sennn3==1)//回退
 								{
 	
 									GPIO_SetBits(GPIOB,GPIO_Pin_6);
@@ -217,7 +242,7 @@ void TIM4_IRQHandler(void)
 					{
 						buff_3510iq[0]=0;
 					}
-					if(PMotor.CircleNum>=2030&buff_3510iq[0]>0)
+					if(PMotor.CircleNum>=1300&buff_3510iq[0]>0)
 					{
 						buff_3510iq[0]=0;
 					}				

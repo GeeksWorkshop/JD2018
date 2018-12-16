@@ -12,7 +12,7 @@
 #include "pid.h"
 #include "timer7.h"
 #include "chassispid.h"
-
+#include "my_sin.h"
 #include "flash.h"
 
 extern pid_t pid_pos[4];
